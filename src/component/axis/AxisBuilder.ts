@@ -253,8 +253,9 @@ const builders: Record<'axisLine' | 'axisTickLabel' | 'axisName', AxisElementsBu
         const extent = axisModel.axis.getExtent();
 
         const matrix = transformGroup.transform;
-        const pt1 = [extent[0], 0];
-        const pt2 = [extent[1], 0];
+        let pt1 = [extent[0], 0];
+        let pt2 = [extent[1], 0];
+        const inverse = pt1[0] > pt2[0];
         if (matrix) {
             v2ApplyTransform(pt1, pt1, matrix);
             v2ApplyTransform(pt2, pt2, matrix);
@@ -303,6 +304,12 @@ const builders: Record<'axisLine' | 'axisTickLabel' | 'axisName', AxisElementsBu
             const symbolWidth = arrowSize[0];
             const symbolHeight = arrowSize[1];
 
+            // if axis is reverse, arrow should be inverted
+            if (inverse) {
+                const tmp = pt1;
+                pt1 = pt2;
+                pt2 = tmp;
+            }
             each([{
                 rotate: opt.rotation + Math.PI / 2,
                 offset: arrowOffset[0],
